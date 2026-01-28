@@ -2,18 +2,13 @@ import os
 import json
 import hashlib
 from core.grid import GridManager
+from core.layer import Layer
+from core.cell import Cell
 from ai.sentinel import Sentinel
 from ai.shadowgrid import ShadowGrid
 from gsg.gsg_core import GlobalShadowGrid
 from cli.ascii_ui import AURA_UI
 from core.identity import CastleIdentity
-
-identity = CastleIdentity()
-
-if not identity.load():
-    print("⚠️ First boot detected")
-    name = input("Name your Castle: ")
-    identity.initialize(name)
 
 CONFIG_FILE = "castle_config.json"
 
@@ -54,10 +49,30 @@ def load_config():
         return json.load(f)
 
 # -----------------------------
+# Build LIMBO / Layer 0
+# -----------------------------
+def build_limbo():
+    layer = Layer(0, "LIMBO")
+    cells = [
+        "Moat Cell",
+        "Gate Cell",
+        "Sentinel Guard HQ",
+        "Firewall Cell",
+        "Portcullis Cell",
+        "Checkpoint Cell",
+        "Network Honeypot Cell",
+        "Dockyard Cell",
+        "Library Cell",
+        "Audit Log Cell"
+    ]
+    for c in cells:
+        layer.add_cell(Cell(c))
+    return layer
+
+# -----------------------------
 # Boot CastleGrid
 # -----------------------------
 def main():
-    # Load config
     config = load_config()
 
     # Initialize main components
@@ -66,11 +81,15 @@ def main():
     gsg = GlobalShadowGrid()
     shadowgrid = ShadowGrid(grid, gsg)
 
-    # Generate and boot all 12 layers
+    # Generate all 12 layers
     grid.generate_all_layers()
+    # Replace Layer 0 with LIMBO
+    grid.layers[0] = build_limbo()
+
+    # Boot layers
     grid.boot_layers()
 
-    # Show first boot message
+    # Confirm online
     print(f"\nCastleGrid '{config['castle']}' online!")
     print(f"Sentinel: Online | ShadowGrid: Online | GSG: Online ({len(gsg.captured_files)} files captured)\n")
     input("Press Enter to launch UI...")
