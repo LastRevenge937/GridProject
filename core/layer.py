@@ -1,19 +1,15 @@
 class Layer:
-    def __init__(self, index: int, name: str):
+    def __init__(self, index, name):
         self.index = index
         self.name = name
+        self.status = "OFFLINE"
         self.cells = []
-        self.status = "Offline"
+
+    def boot(self):
+        self.status = "ONLINE"
+
+    def shutdown(self):
+        self.status = "OFFLINE"
 
     def add_cell(self, cell):
         self.cells.append(cell)
-
-    def boot(self):
-        self.status = "Online"
-        for c in self.cells:
-            c.start()
-
-    def shutdown(self):
-        self.status = "Locked"
-        for c in self.cells:
-            c.shutdown()
