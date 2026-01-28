@@ -6,6 +6,14 @@ from ai.sentinel import Sentinel
 from ai.shadowgrid import ShadowGrid
 from gsg.gsg_core import GlobalShadowGrid
 from cli.ascii_ui import AURA_UI
+from core.identity import CastleIdentity
+
+identity = CastleIdentity()
+
+if not identity.load():
+    print("⚠️ First boot detected")
+    name = input("Name your Castle: ")
+    identity.initialize(name)
 
 CONFIG_FILE = "castle_config.json"
 
