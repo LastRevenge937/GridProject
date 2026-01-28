@@ -1,4 +1,10 @@
 from core.protocols import ProtocolState
+from core.identity import CastleIdentity
+
+identity = CastleIdentity()
+identity.load()
+
+print(f"[Sentinel] Online — Castle: {identity.name}")
 
 class Sentinel:
     def __init__(self, grid):
