@@ -36,4 +36,18 @@ class GridManager:
             print(f"[Layer {layer.index}: {layer.name}] Online")
 
 
+class GridManager:
+    def __init__(self, castle_name: str):
+        self.castle_name = castle_name
+        self.layers = []
+        self.global_firewall = None
+        self.firewall_events = []
+
+    def attach_global_firewall(self, firewall):
+        self.global_firewall = firewall
+        self.log_global(f"Global Firewall attached: {firewall.name}")
+
+    def log_firewall_event(self, message: str):
+        self.firewall_events.append(message)
+        self.log_global(f"[FIREWALL] {message}")
 
