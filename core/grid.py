@@ -1,70 +1,39 @@
-from core.protocols import ProtocolState
-from core.protocol_visuals import ProtocolVisuals
-from core.deadman import DeadManCore
-from core.protocols import ProtocolState
+from typing import List, Optional
+from .layer import Layer
+from .file import GridFile
+from .firewall import Firewall
 
 class GridManager:
     def __init__(self, castle_name: str):
         self.castle_name = castle_name
-        self.layers = {}
-        self.protocol = ProtocolState.NORMAL
-        self.global_log = []
+        self.layers: List[Layer] = []
+        self.global_firewall: Optional[Firewall] = None
 
-    def log_global(self, message: str):
-        self.global_log.append(message)
+    def attach_global_firewall(self, firewall: Firewall):
+        self.global_firewall = firewall
+        print(f"[Grid] Global Firewall attached: {firewall.name}")
+
+    def add_layer(self, layer: Layer):
+        self.layers.append(layer)
+        print(f"[Grid] Added layer: {layer.name}")
+
+    def receive_file(self, file: GridFile):
+        # Global firewall check
+        if self.global_firewall and not self.global_firewall.scan(file):
+            print(f"[Grid] Global Firewall blocked file: {file.name}")
+            return
+        # Layer-level delivery
+        for layer in self.layers:
+            layer.receive_file(file)
 
     def generate_all_layers(self):
-        from layers.limbo import build_limbo
-        from layers.infrastructure import build_infrastructure
-        from layers.operations import build_operations
-        from layers.purgatory import build_purgatory
-
-        self.layers[0] = build_limbo()
-        self.layers[2] = build_infrastructure()
-        self.layers[3] = build_operations()
-        self.layers[7] = build_purgatory()
-
+        # Placeholder for layer creation
         for i in range(12):
-            if i not in self.layers:
-                from core.layer import Layer
-                self.layers[i] = Layer(i, f"LAYER {i}")
+            self.add_layer(Layer(i, f"Layer {i}"))
 
     def boot_layers(self):
-        for layer in self.layers.values():
-            layer.boot()
-            print(f"Layer {layer.index}: {layer.name} — Online")
+        for layer in self.layers:
+            print(f"[Layer {layer.index}: {layer.name}] Online")
 
-    def activate_purge(self):
-        if self.protocol == ProtocolState.LAST_REVENGE:
-            return
-
-        self.protocol = ProtocolState.PURGE
-        self.log_global("PURGE protocol activated")
-
-        for idx, layer in self.layers.items():
-            if idx not in (0, 7):
-                layer.shutdown()
-
-    def activate_last_revenge(self):
-        self.protocol = ProtocolState.LAST_REVENGE
-        self.log_global("LAST_REVENGE protocol activated")
-
-        for idx, layer in self.layers.items():
-            if idx != 0:
-                layer.shutdown()
-
-def activate_purge(self):
-    self.protocol = ProtocolState.PURGE
-    ProtocolVisuals.purge_banner()
-    for idx, layer in self.layers.items():
-        if idx not in (0, 7):
-            layer.shutdown()
-
-def activate_last_revenge(self):
-    self.protocol = ProtocolState.LAST_REVENGE
-    ProtocolVisuals.last_revenge_banner()
-    for idx, layer in self.layers.items():
-        if idx != 0:
-            layer.shutdown()
 
 
