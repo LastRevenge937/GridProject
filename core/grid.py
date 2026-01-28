@@ -53,3 +53,18 @@ class GridManager:
             if idx != 0:
                 layer.shutdown()
 
+def activate_purge(self):
+    self.protocol = ProtocolState.PURGE
+    ProtocolVisuals.purge_banner()
+    for idx, layer in self.layers.items():
+        if idx not in (0, 7):
+            layer.shutdown()
+
+def activate_last_revenge(self):
+    self.protocol = ProtocolState.LAST_REVENGE
+    ProtocolVisuals.last_revenge_banner()
+    for idx, layer in self.layers.items():
+        if idx != 0:
+            layer.shutdown()
+
+
