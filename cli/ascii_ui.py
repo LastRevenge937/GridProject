@@ -13,10 +13,26 @@ class AURA_UI:
         os.system("cls" if os.name == "nt" else "clear")
 
     def draw(self):
-        self.clear()
-        print(f"🏰 CASTLEGRID — {self.grid.castle_name}")
-        print(f"Protocol: {self.grid.protocol}")
-        print("=" * 50)
+    self.clear()
+    print(f"🏰 CASTLEGRID — {self.grid.castle_name}")
+    print(f"Protocol: {self.grid.protocol}")
+    print("┌──────────────────────── CASTLEGRID ────────────────────────┐")
+    print("│ [0] LIMBO             │ Entry / Perimeter                  │")
+    print("│ [1] COURTYARD         │ Normal Operations                  │")
+    print("│ [2] INFRASTRUCTURE    │ CPU / GPU / RAM Monitoring         │")
+    print("│ [3] OPERATIONS        │ Workflows & Batch Transfer         │")
+    print("│ [4] SECURED TRANSIT   │ Escorted Movement                  │")
+    print("│ [5] INTER-CASTLE PIER │ Treaty Exchange                    │")
+    print("│ [6] QUARANTINE CITY   │ Isolation                          │")
+    print("│ [7] PURGATORY         │ ShadowGrid Arena                   │")
+    print("│ [8] CROWN VAULTS      │ Maximum Security Storage           │")
+    print("│ [9] RINZLER FACTORY   │ Defensive Agents                   │")
+    print("│ [10] PRIVATE SHADOWGRID│ Doctrine Engine                    │")
+    print("│ [11] DEAD-MAN CORE    │ Absolute Lockdown                  │")
+    print("└────────────────────────────────────────────────────────────┘")
+    print("\n[1] Cells  [2] Metrics  [3] GSG")
+    print("[P] PURGE  [L] LASTREVENGE  [Q] Quit")
+
 
         for i in range(12):
             layer = self.grid.layers[i]
