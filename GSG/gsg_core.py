@@ -1,6 +1,18 @@
 import os
 import json
 from core.file import GridFile
+from core.identity import CastleIdentity
+from gsg.news_feed import NewsFeed
+
+class GlobalShadowGrid:
+    def __init__(self):
+        self.identity = CastleIdentity()
+        self.identity.load()
+
+        self.news = NewsFeed()
+
+    def add_news(self, message: str):
+        self.news.post(f"[{self.identity.name}] {message}")
 
 class GlobalShadowGrid:
     """
