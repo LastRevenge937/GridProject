@@ -1,6 +1,12 @@
 import os
 from core.security import verify_password
 from metrics.system_metrics import SystemMetrics
+from core.identity import CastleIdentity
+
+identity = CastleIdentity()
+identity.load()
+
+print(f"CASTLEGRID :: {identity.name}")
 
 class AURA_UI:
     """
