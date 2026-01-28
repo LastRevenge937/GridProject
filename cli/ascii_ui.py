@@ -1,8 +1,17 @@
 import os
 from core.security import verify_password
-from core.protocols import ProtocolState
+from metrics.system_metrics import SystemMetrics
 
 class AURA_UI:
+    """
+    Main ASCII UI for CastleGrid
+    Supports:
+        - Layer map
+        - Protocol display
+        - Numkey navigation to Cells / Metrics / GSG
+        - PURGE / LAST_REVENGE commands
+        - Quit
+    """
     def __init__(self, grid, sentinel, shadowgrid, config):
         self.grid = grid
         self.sentinel = sentinel
@@ -13,33 +22,24 @@ class AURA_UI:
         os.system("cls" if os.name == "nt" else "clear")
 
     def draw(self):
-    self.clear()
-    print(f"🏰 CASTLEGRID — {self.grid.castle_name}")
-    print(f"Protocol: {self.grid.protocol}")
-    print("┌──────────────────────── CASTLEGRID ────────────────────────┐")
-    print("│ [0] LIMBO             │ Entry / Perimeter                  │")
-    print("│ [1] COURTYARD         │ Normal Operations                  │")
-    print("│ [2] INFRASTRUCTURE    │ CPU / GPU / RAM Monitoring         │")
-    print("│ [3] OPERATIONS        │ Workflows & Batch Transfer         │")
-    print("│ [4] SECURED TRANSIT   │ Escorted Movement                  │")
-    print("│ [5] INTER-CASTLE PIER │ Treaty Exchange                    │")
-    print("│ [6] QUARANTINE CITY   │ Isolation                          │")
-    print("│ [7] PURGATORY         │ ShadowGrid Arena                   │")
-    print("│ [8] CROWN VAULTS      │ Maximum Security Storage           │")
-    print("│ [9] RINZLER FACTORY   │ Defensive Agents                   │")
-    print("│ [10] PRIVATE SHADOWGRID│ Doctrine Engine                    │")
-    print("│ [11] DEAD-MAN CORE    │ Absolute Lockdown                  │")
-    print("└────────────────────────────────────────────────────────────┘")
-    print("\n[1] Cells  [2] Metrics  [3] GSG")
-    print("[P] PURGE  [L] LASTREVENGE  [Q] Quit")
+        self.clear()
+        print(f"🏰 CASTLEGRID — {self.grid.castle_name}")
+        print(f"Protocol: {self.grid.protocol}\n")
 
-
+        # ASCII UI Map
+        print("┌──────────────────────── CASTLEGRID ────────────────────────┐")
         for i in range(12):
             layer = self.grid.layers[i]
-            print(f"[{i}] {layer.name:<18} | {layer.status}")
+            status = layer.status
+            name = layer.name
+            print(
+                f"│ [{i:<2}] {name:<20} │ {'Description':<28} │ {status:<6} │"
+            )
+        print("└────────────────────────────────────────────────────────────┘\n")
 
-        print("\n[1] Cells  [2] Metrics  [3] GSG")
-        print("[P] PURGE  [L] LASTREVENGE  [Q] Quit")
+        # Commands
+        print("[1] Cells  [2] Metrics  [3] GSG")
+        print("[P] PURGE  [L] LASTREVENGE  [Q] Quit\n")
 
     def run(self):
         while True:
@@ -49,13 +49,49 @@ class AURA_UI:
             if cmd == "Q":
                 break
 
-            if cmd in ("P", "L"):
+            elif cmd in ("P", "L"):
                 pw = input("Admin Password: ")
                 if not verify_password(pw, self.config["hash"]):
-                    input("Invalid password. Press Enter.")
+                    input("Invalid password. Press Enter to continue...")
                     continue
 
                 if cmd == "P":
                     self.grid.activate_purge()
-                else:
+                elif cmd == "L":
                     self.grid.activate_last_revenge()
+
+            elif cmd == "1":
+                self.show_cells()
+
+            elif cmd == "2":
+                self.show_metrics()
+
+            elif cmd == "3":
+                self.show_gsg()
+
+            else:
+                input("Unknown command. Press Enter to continue...")
+
+    def show_cells(self):
+        self.clear()
+        print("=== Cells Status ===")
+        for layer in self.grid.layers.values():
+            print(f"Layer {layer.index}: {layer.name}")
+            for cell in layer.cells:
+                print(f"  - {cell.name}")
+        input("\nPress Enter to return to main menu...")
+
+    def show_metrics(self):
+        self.clear()
+        metrics = SystemMetrics().snapshot()
+        print("=== System Metrics ===")
+        for key, value in metrics.items():
+            print(f"{key}: {value}")
+        input("\nPress Enter to return to main menu...")
+
+    def show_gsg(self):
+        self.clear()
+        print("=== Global Shadow Grid ===")
+        print(f"Captured files: {len(self.shadowgrid.captured_files)}")
+        print("Pending doctrines:", len(getattr(self.shadowgrid, "pending_doctrines", [])))
+        input("\nPress Enter to return to main menu...")
